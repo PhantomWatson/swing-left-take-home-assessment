@@ -10,6 +10,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
+import { sortByDate, formatDate } from "../util/date";
 
 export default function Page() {
   const [loading, setLoading] = React.useState(true);
@@ -28,12 +29,6 @@ export default function Page() {
   };
 
   const columnHelper = createColumnHelper();
-
-  const sortByDate = (rowA, rowB, columnId) => {
-    const dateA = new Date(rowA.getValue(columnId));
-    const dateB = new Date(rowB.getValue(columnId));
-    return dateA.getTime() - dateB.getTime();
-  };
 
   const columns = [
     {
@@ -139,17 +134,6 @@ export default function Page() {
         </a>
       );
     }
-  };
-
-  const formatDate = (dateString) => {
-    if (!dateString) {
-      return "Unknown date";
-    }
-    const date = new Date(dateString);
-    if (isNaN(date.getTime())) {
-      return "Invalid date";
-    }
-    return date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
   };
 
   const sortableTable = (
