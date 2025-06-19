@@ -29,6 +29,12 @@ export default function Page() {
 
   const columnHelper = createColumnHelper();
 
+  const sortByDate = (rowA, rowB, columnId) => {
+    const dateA = new Date(rowA.getValue(columnId));
+    const dateB = new Date(rowB.getValue(columnId));
+    return dateA.getTime() - dateB.getTime();
+  };
+
   const columns = [
     {
       accessorKey: 'State',
@@ -46,14 +52,17 @@ export default function Page() {
         columnHelper.accessor('DeadlineByMail', {
           header: () => 'By mail',
           cell: info => formatDate(info.getValue()),
+          sortingFn: sortByDate,
         }),
         columnHelper.accessor('DeadlineInPerson', {
           header: () => 'In person',
           cell: info => formatDate(info.getValue()),
+          sortingFn: sortByDate,
         }),
         columnHelper.accessor('DeadlineOnline', {
           header: () => 'Online',
           cell: info => formatDate(info.getValue()),
+          sortingFn: sortByDate,
         }),
       ],
     }),
