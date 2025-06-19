@@ -2,18 +2,20 @@
 
 import React, {useEffect} from "react";
 import {
+  SortingState,
+  createColumnHelper,
   flexRender,
   getCoreRowModel,
+  getFilteredRowModel,
   getSortedRowModel,
-  SortingState,
   useReactTable,
-  createColumnHelper
 } from '@tanstack/react-table'
 
 export default function Page() {
   const [loading, setLoading] = React.useState(true);
   const [deadlines, setDeadlines] = React.useState<Deadline[] | null>(null);
   const [sorting, setSorting] = React.useState<SortingState>([{id: 'State', desc: false}]);
+  const [globalFilter, setGlobalFilter] = React.useState<string>("")
 
   type Deadline = {
     State: string;
@@ -33,11 +35,13 @@ export default function Page() {
       cell: info => info.getValue().trim() || "Unknown state",
       header: () => 'State',
       rowSpan: 2,
+      enableGlobalFilter: true,
     },
     columnHelper.group({
       id: 'Deadline',
       header: () => 'Deadline',
       enableSorting: false,
+      enableGlobalFilter: false,
       columns: [
         columnHelper.accessor('DeadlineByMail', {
           header: () => 'By mail',
@@ -58,12 +62,14 @@ export default function Page() {
       cell: info => info.getValue().trim() || "No description available",
       header: () => 'Description',
       rowSpan: 2,
+      enableGlobalFilter: false,
     },
     {
       accessorKey: 'ElectionDayRegistration',
       cell: info => info.getValue().trim() || "No",
       header: () => 'Election day registration?',
       rowSpan: 2,
+      enableGlobalFilter: false,
     },
     {
       accessorKey: 'OnlineRegistrationLink',
@@ -73,6 +79,7 @@ export default function Page() {
       },
       header: () => 'Online registration',
       rowSpan: 2,
+      enableGlobalFilter: false,
     }
   ];
 
@@ -80,10 +87,12 @@ export default function Page() {
     columns,
     data: deadlines || [],
     getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
     onSortingChange: setSorting,
     enableSortingRemoval: false,
-    state: {sorting},
+    state: {sorting, globalFilter},
+    onGlobalFilterChange: setGlobalFilter,
   });
 
   useEffect(() => {
@@ -186,6 +195,10 @@ export default function Page() {
         </thead>
         <tbody>
           {table.getRowModel().rows.map(row => {
+            if (!row.getVisibleCells()) {
+              return null;
+            }
+
             return (
               <tr key={row.id}>
                 {row.getVisibleCells().map(cell => {
@@ -208,7 +221,21 @@ export default function Page() {
 
   return (
     <main>
+      <div className="my-2">
+        <div className="form-group mx-2">
+          <label htmlFor="filter-by-state" className="me-2">Filter by state:</label>
+          <input
+            id="filter-by-state"
+            value={globalFilter}
+            onChange={e => {
+              table.setGlobalFilter(String(e.target.value));
+            }}
+            placeholder="Enter state name"
+          />
+        </div>
+      </div>
+
       {sortableTable}
     </main>
-  );
+);
 }
