@@ -5,7 +5,7 @@ const { Sequelize, DataTypes } = require("sequelize");
 
 // Update these values with your PostgreSQL credentials
 const user = "postgres";
-const password = "test";
+const password = "password";
 const host = "localhost";
 const port = 5432;
 const newDatabase = "state_registration_deadlines";
