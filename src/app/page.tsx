@@ -11,22 +11,13 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { sortByDate, formatDate } from "../util/date";
+import { Deadline } from "../models/VoterRegistrationDeadline";
 
 export default function Page() {
   const [loading, setLoading] = React.useState(true);
   const [deadlines, setDeadlines] = React.useState<Deadline[] | null>(null);
   const [sorting, setSorting] = React.useState<SortingState>([{id: 'State', desc: false}]);
   const [globalFilter, setGlobalFilter] = React.useState<string>("")
-
-  type Deadline = {
-    State: string;
-    DeadlineInPerson: string;
-    DeadlineByMail: string;
-    DeadlineOnline: string;
-    ElectionDayRegistration: string;
-    OnlineRegistrationLink: string;
-    Description: string;
-  };
 
   const columnHelper = createColumnHelper();
 

@@ -21,3 +21,13 @@ export const VoterRegistrationDeadline = sequelize.define(
 export const fetchAll = async () => {
   return await VoterRegistrationDeadline.findAll();
 };
+
+export type Deadline = {
+  State: string;
+  DeadlineInPerson: string;
+  DeadlineByMail: string;
+  DeadlineOnline: string;
+  ElectionDayRegistration: string;
+  OnlineRegistrationLink: string;
+  Description: string;
+};
