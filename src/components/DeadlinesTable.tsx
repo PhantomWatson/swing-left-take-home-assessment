@@ -170,6 +170,8 @@ export default function DeadlinesTable() {
                       borderLeftWidth: header.colSpan > 1 ? '1px' : '0px',
                       borderRightWidth: header.colSpan > 1 ? '1px' : '0px',
                       borderBottomWidth: header.colSpan > 1 ? '0px' : '1px',
+                      position: 'sticky',
+                      top: 0,
                     }}
                   >
                     {header.isPlaceholder ? null : (
