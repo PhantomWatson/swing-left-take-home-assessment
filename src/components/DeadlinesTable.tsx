@@ -116,16 +116,14 @@ export default function DeadlinesTable() {
     if (!url) {
       return null;
     }
-    const govDomain = (url.match(/(https?:\/\/[^\/]+)/g) || [])
+    const linkLabel = (url.match(/(https?:\/\/[^\/]+)/g) || [])
       .map(m => m.match(/https?:\/\/([^\/]+)/)[1])
       .find(domain => !domain.endsWith('archive.org')) || url;
-    if (govDomain) {
-      return (
-        <a href={url}>
-          {govDomain}
-        </a>
-      );
-    }
+    return (
+      <a href={url}>
+        {linkLabel}
+      </a>
+    );
   };
 
   // Loading screen
