@@ -12,13 +12,18 @@ import { sortByDate, formatDate } from "../util/date";
 import { Deadline } from "../models/VoterRegistrationDeadline";
 
 export default function DeadlinesTable() {
+  // State to manage loading state
   const [loading, setLoading] = React.useState(true);
+
+  // State to hold the deadlines data fetched from the API
   const [deadlines, setDeadlines] = React.useState<Deadline[] | null>(null);
+
+  // State values used by the sortable/filterable table
   const [sorting, setSorting] = React.useState<SortingState>([{id: 'State', desc: false}]);
   const [globalFilter, setGlobalFilter] = React.useState<string>("");
 
+  // Define how deadline data will be rendered as a table
   const columnHelper = createColumnHelper();
-
   const columns = [
     {
       accessorKey: 'State',
@@ -75,7 +80,6 @@ export default function DeadlinesTable() {
       enableGlobalFilter: false,
     }
   ];
-
   const table = useReactTable({
     columns,
     data: deadlines || [],
@@ -88,6 +92,7 @@ export default function DeadlinesTable() {
     onGlobalFilterChange: setGlobalFilter,
   });
 
+  // Fetch deadlines upon component mount
   useEffect(() => {
     const load = async () => {
       const fetchUrl = 'http://localhost:3000/api/registration_deadlines';
@@ -101,6 +106,12 @@ export default function DeadlinesTable() {
     load();
   }, []);
 
+  /**
+   * Returns a linked version of the URL, with the label abbreviated to the non-archive domain name if possible.
+   * If the URL is not available, returns null.
+   *
+   * @param url
+   */
   const linkToNonArchiveDomain = (url) => {
     if (!url) {
       return null;
@@ -117,14 +128,17 @@ export default function DeadlinesTable() {
     }
   };
 
+  // Loading screen
   if (loading) {
     return <div className="alert">Loading...</div>;
   }
 
+  // No deadlines were found
   if (!deadlines || deadlines.length === 0) {
     return <div className="alert alert-warning">No voter registration deadlines were found.</div>;
   }
 
+  // Render the table with deadlines data
   return (
     <>
       <div className="my-2">
