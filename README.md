@@ -2,6 +2,7 @@
 
 ### Installation
 1. `npm install --no-save`
+1. `cp .env.template .env.local` and update the values as needed
 1. `npm run db:create-db`
 1. `npm run dev`
 1. Open your browser and navigate to [http://localhost:3000](http://localhost:3000)
