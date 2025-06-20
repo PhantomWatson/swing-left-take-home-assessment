@@ -3,7 +3,6 @@ const fs = require("fs");
 const csv = require("csv-parser");
 const { Sequelize, DataTypes } = require("sequelize");
 
-// Update these values with your PostgreSQL credentials
 const user = process.env.POSTGRES_USER;
 const password = process.env.POSTGRES_PASSWORD;
 const host = "localhost";
