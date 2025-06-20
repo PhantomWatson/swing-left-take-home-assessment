@@ -11,6 +11,8 @@ import {
 import { sortByDate, formatDate } from "../util/date";
 import { Deadline } from "../models/VoterRegistrationDeadline";
 import DeadlinesTableMobile from "./DeadlinesTableMobile";
+import LoadingIndicator from "./Loading";
+import NoResults from "./NoResults";
 
 export default function DeadlinesTable() {
   // State value to manage loading state
@@ -142,12 +144,12 @@ export default function DeadlinesTable() {
 
   // Loading screen
   if (loading) {
-    return <div className="alert">Loading...</div>;
+    return <LoadingIndicator />;
   }
 
   // No deadlines were found
   if (!deadlines || deadlines.length === 0) {
-    return <div className="alert alert-warning">No voter registration deadlines were found.</div>;
+    return <NoResults />;
   }
 
   // Render the table with deadlines data
