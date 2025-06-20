@@ -12,7 +12,7 @@ import { sortByDate, formatDate } from "../util/date";
 import { Deadline } from "../models/VoterRegistrationDeadline";
 
 export default function DeadlinesTable() {
-  // State to manage loading state
+  // State value to manage loading state
   const [loading, setLoading] = React.useState(true);
 
   // State to hold the deadlines data fetched from the API
@@ -21,6 +21,9 @@ export default function DeadlinesTable() {
   // State values used by the sortable/filterable table
   const [sorting, setSorting] = React.useState<SortingState>([{id: 'State', desc: false}]);
   const [globalFilter, setGlobalFilter] = React.useState<string>("");
+
+  // State value for rendering in mobile vs. desktop modes
+  const [isMobile, setIsMobile] = React.useState(false);
 
   // Define how deadline data will be rendered as a table
   const columnHelper = createColumnHelper();
@@ -92,8 +95,8 @@ export default function DeadlinesTable() {
     onGlobalFilterChange: setGlobalFilter,
   });
 
-  // Fetch deadlines upon component mount
   useEffect(() => {
+    // Fetch deadlines
     const load = async () => {
       const fetchUrl = 'http://localhost:3000/api/registration_deadlines';
       const deadlines = await fetch(fetchUrl)
@@ -104,6 +107,16 @@ export default function DeadlinesTable() {
       }
     };
     load();
+
+    // Set up tracking of mobile vs. desktop modes
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 1050);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
   }, []);
 
   /**
@@ -153,81 +166,124 @@ export default function DeadlinesTable() {
         </div>
       </div>
 
-      <div className="p-2">
-        <div className="h-2"/>
-        <table className="table table-striped">
-          <thead>
-          {table.getHeaderGroups().map(headerGroup => (
-            <tr key={headerGroup.id}>
-              {headerGroup.headers.map(header => {
-                return (
-                  <th
-                    key={header.id}
-                    colSpan={header.colSpan}
-                    style={{
-                      textAlign: header.colSpan > 1 ? 'center' : 'left',
-                      borderTopWidth: header.colSpan > 1 ? '1px' : '0px',
-                      borderLeftWidth: header.colSpan > 1 ? '1px' : '0px',
-                      borderRightWidth: header.colSpan > 1 ? '1px' : '0px',
-                      borderBottomWidth: header.colSpan > 1 ? '0px' : '1px',
-                      position: 'sticky',
-                      top: 0,
-                    }}
-                  >
-                    {header.isPlaceholder ? null : (
-                      <div
-                        style={{
-                          cursor: header.column.getCanSort() ? 'pointer' : 'default',
-                          whiteSpace: 'nowrap',
-                        }}
-                        onClick={header.column.getToggleSortingHandler()}
-                        title={
-                          header.column.getCanSort()
-                            ? header.column.getNextSortingOrder() === 'asc'
-                              ? 'Sort ascending'
-                              : header.column.getNextSortingOrder() === 'desc'
-                                ? 'Sort descending'
-                                : 'Clear sort'
-                            : undefined
-                        }
-                      >
-                        {flexRender(header.column.columnDef.header, header.getContext())}
-                        {{
-                          asc: ' 🔼',
-                          desc: ' 🔽',
-                        }[header.column.getIsSorted() as string] ?? null}
-                      </div>
-                    )}
-                  </th>
-                )
-              })}
-            </tr>
-          ))}
-          </thead>
-          <tbody>
+      {isMobile && (
+        <div>
           {table.getRowModel().rows.map(row => {
-            if (!row.getVisibleCells()) {
-              return null;
-            }
-
+            const cells = row.getVisibleCells();
+            console.log(cells);
+            const formattedContent = {};
+            cells.forEach(cell => {
+              formattedContent[cell.column.id] = flexRender(
+                cell.column.columnDef.cell,
+                cell.getContext()
+              );
+            });
             return (
-              <tr key={row.id}>
-                {row.getVisibleCells().map(cell => {
+              <div key={row.id} className="card m-2 p-2">
+                <p style={{borderBottom: '1px solid #ccc', marginBottom: '0.5em'}}>
+                  <strong style={{fontSize: '1.2em'}}>{formattedContent['State']}</strong>
+                </p>
+                <ul style={{marginBottom: 0}}>
+                  <li>
+                    <strong>Deadlines</strong>
+                    <ul>
+                      <li><strong>By mail:</strong> {formattedContent['DeadlineByMail']}</li>
+                      <li><strong>In person:</strong> {formattedContent['DeadlineInPerson']}</li>
+                      <li><strong>Online:</strong> {formattedContent['DeadlineOnline']}</li>
+                    </ul>
+                  </li>
+                  <li>
+                    <strong>Registration requirements:</strong> {formattedContent['Description']}
+                  </li>
+                  <li>
+                    <strong>Election day registration?</strong> {formattedContent['ElectionDayRegistration']}
+                  </li>
+                  <li>
+                    <strong>Online registration:</strong> {formattedContent['OnlineRegistrationLink']}
+                  </li>
+                </ul>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {!isMobile && (
+        <div className="p-2">
+          <table className="table table-striped">
+            <thead>
+            {table.getHeaderGroups().map(headerGroup => (
+              <tr key={headerGroup.id}>
+                {headerGroup.headers.map(header => {
                   return (
-                    <td key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
+                    <th
+                      key={header.id}
+                      colSpan={header.colSpan}
+                      style={{
+                        textAlign: header.colSpan > 1 ? 'center' : 'left',
+                        borderTopWidth: header.colSpan > 1 ? '1px' : '0px',
+                        borderLeftWidth: header.colSpan > 1 ? '1px' : '0px',
+                        borderRightWidth: header.colSpan > 1 ? '1px' : '0px',
+                        borderBottomWidth: header.colSpan > 1 ? '0px' : '1px',
+                        position: 'sticky',
+                        top: 0,
+                      }}
+                    >
+                      {header.isPlaceholder ? null : (
+                        <div
+                          style={{
+                            cursor: header.column.getCanSort() ? 'pointer' : 'default',
+                            whiteSpace: 'nowrap',
+                          }}
+                          onClick={header.column.getToggleSortingHandler()}
+                          title={
+                            header.column.getCanSort()
+                              ? header.column.getNextSortingOrder() === 'asc'
+                                ? 'Sort ascending'
+                                : header.column.getNextSortingOrder() === 'desc'
+                                  ? 'Sort descending'
+                                  : 'Clear sort'
+                              : undefined
+                          }
+                        >
+                          {flexRender(header.column.columnDef.header, header.getContext())}
+                          {{
+                            asc: ' 🔼',
+                            desc: ' 🔽',
+                          }[header.column.getIsSorted() as string] ?? null}
+                        </div>
                       )}
-                    </td>
+                    </th>
                   )
                 })}
               </tr>
-            )
-          })}
-          </tbody>
-        </table>
-      </div>
+            ))}
+            </thead>
+            <tbody>
+            {table.getRowModel().rows.map(row => {
+              if (!row.getVisibleCells()) {
+                return null;
+              }
+
+              return (
+                <tr key={row.id}>
+                  {row.getVisibleCells().map(cell => {
+                    return (
+                      <td key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </td>
+                    )
+                  })}
+                </tr>
+              )
+            })}
+            </tbody>
+          </table>
+        </div>
+      )}
     </>
   );
 }
