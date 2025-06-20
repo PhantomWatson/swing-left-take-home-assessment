@@ -122,7 +122,7 @@ export default function DeadlinesTable() {
 
     // Set up tracking of mobile vs. desktop modes
     const handleResize = () => {
-      setIsMobile(window.innerWidth <= 1050);
+      setIsMobile(window.innerWidth <= 1060);
     };
     handleResize();
     window.addEventListener('resize', handleResize);
