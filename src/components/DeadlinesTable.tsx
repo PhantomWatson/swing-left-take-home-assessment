@@ -261,6 +261,10 @@ export default function DeadlinesTable() {
             })}
             </tbody>
           </table>
+          <p style={{textAlign: 'center'}}>
+            If you have any questions or would like to report incorrect or missing information,
+            please <a href="/contact" onClick={(e) => {e.preventDefault(); alert('This is a fake link.');}}>contact us</a>.
+          </p>
         </div>
       )}
     </>
