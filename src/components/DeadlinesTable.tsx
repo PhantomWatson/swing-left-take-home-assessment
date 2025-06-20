@@ -57,8 +57,8 @@ export default function DeadlinesTable() {
     }),
     {
       accessorKey: 'Description',
-      cell: info => info.getValue().trim() || "No description available",
-      header: () => 'Description',
+      cell: info => info.getValue().trim() || "",
+      header: () => 'Registration requirements',
       rowSpan: 2,
       enableGlobalFilter: false,
     },
