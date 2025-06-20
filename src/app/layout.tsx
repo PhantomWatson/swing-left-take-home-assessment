@@ -20,7 +20,7 @@ export default function RootLayout({
             integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr"
             crossOrigin="anonymous"/>
     </head>
-    <body>
+    <body style={{padding: '1em'}}>
     {children}
     </body>
     </html>
