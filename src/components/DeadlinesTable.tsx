@@ -214,12 +214,10 @@ export default function DeadlinesTable() {
                           onClick={header.column.getToggleSortingHandler()}
                           title={
                             header.column.getCanSort()
-                              ? header.column.getNextSortingOrder() === 'asc'
+                              ? (header.column.getNextSortingOrder() === 'asc'
                                 ? 'Sort ascending'
-                                : header.column.getNextSortingOrder() === 'desc'
-                                  ? 'Sort descending'
-                                  : 'Clear sort'
-                              : undefined
+                                : 'Sort descending'
+                              ) : undefined
                           }
                         >
                           {flexRender(header.column.columnDef.header, header.getContext())}
